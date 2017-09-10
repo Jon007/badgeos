@@ -64,7 +64,9 @@ function badgeos_achievement_submissions( $content = '' ) {
 	return $content;
 
 }
-add_filter( 'the_content', 'badgeos_achievement_submissions' );
+//FIX: this function doesn't check is_admin or post type. 
+//it inserts itself into every content, breaking other functionality and is unnecessary
+//add_filter( 'the_content', 'badgeos_achievement_submissions' );
 
 /**
  * Add filters to remove stuff from our singular pages and add back in how we want it
@@ -74,10 +76,13 @@ add_filter( 'the_content', 'badgeos_achievement_submissions' );
  */
 function badgeos_do_single_filters() {
 	// check we're in the right place
-	badgeos_is_main_loop();
+    //FIX: Actually check the result of the is_main_loop test
+    if (! badgeos_is_main_loop()){return;}
 	// enqueue our stylesheet
 	wp_enqueue_style( 'badgeos-single' );
 	// no worries.. we'll add back later
+  //TODO: very worried, the blanket removing and re-adding had 
+  //negative impact on other functionality including excerpt handling
 	remove_filter( 'the_content', 'wpautop' );
 	// filter out the post title
 	// add_filter( 'the_title', 'badgeos_remove_to_reformat_entries_title', 10, 2 );
@@ -119,7 +124,11 @@ function badgeos_reformat_entries( $content ) {
 
 	// filter, but only on the main loop!
 	if ( !badgeos_is_main_loop( $badge_id ) )
-		return wpautop( $content );
+        return $content;
+//TODO: BadgeOS seriously breaks autop by removing it and then adding it
+// for all content calls with no consideration of context, thereby
+// breaking other functionality (for example excerpt building, where autop is not expected)
+//		return wpautop( $content );
 
 	// now that we're where we want to be, tell the filters to stop removing
 	$GLOBALS['badgeos_reformat_content'] = true;
@@ -332,7 +341,9 @@ function badgeos_add_earned_class_single( $classes = array() ) {
 
 	return $classes;
 }
-add_filter( 'post_class', 'badgeos_add_earned_class_single' );
+//FIX: this function incorrectly adds badge classes to every single post
+//so normal posts of type "post" get the class 'user-has-not-earned'
+//add_filter( 'post_class', 'badgeos_add_earned_class_single' );
 
 /**
  * Returns a message if user has earned the achievement.
@@ -379,8 +390,17 @@ function badgeos_has_user_earned_achievement( $achievement_id = 0, $user_id = 0 
  * @param  integer $achievement The achievement's post ID
  * @return string               Concatenated markup
  */
-function badgeos_render_achievement( $achievement = 0 ) {
-	global $user_ID;
+function badgeos_render_achievement( $achievement = 0, $user_ID = 0 ) {
+  //FIX: attempt to use displayed user if available
+  //otherwise when looking at another users profile the badges displayed are not correct for that user
+	//global $user_ID;
+    if (! $user_ID){
+        if (function_exists('bbp_get_user_id')){
+            $user_ID = bbp_get_user_id();
+        } else {
+            $user_ID = get_current_user_id();
+        }
+    }
 
 	// If we were given an ID, get the post
 	if ( is_numeric( $achievement ) )
@@ -801,7 +821,9 @@ function badgeos_hide_next_hidden_achievement_link($link) {
 	return $link;
 
 }
-add_filter('next_post_link', 'badgeos_hide_next_hidden_achievement_link');
+//FIX: this incorrectly applies to all post types and 
+//breaks previous/next navigation for normal posts, woocommerce products etc etc
+//add_filter('next_post_link', 'badgeos_hide_next_hidden_achievement_link');
 
 /**
  * Hide the hidden achievement post link from previous post link
@@ -825,8 +847,9 @@ function badgeos_hide_previous_hidden_achievement_link($link) {
 	return $link;
 
 }
-
-add_filter('previous_post_link', 'badgeos_hide_previous_hidden_achievement_link');
+//FIX: this incorrectly applies to all post types and 
+//breaks previous/next navigation for normal posts, woocommerce products etc etc
+//add_filter('previous_post_link', 'badgeos_hide_previous_hidden_achievement_link');
 
 
 /*

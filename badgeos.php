@@ -128,6 +128,8 @@ class BadgeOS {
 	 * Initialize CMB.
 	 */
 	function include_cmb() {
+	  //FIX: avoid loading admin scripts on front end
+    if (! is_admin()){return;}
 		require_once( $this->directory_path . 'includes/cmb/load.php' );
 	}
 
@@ -273,7 +275,9 @@ class BadgeOS {
 	 * Frontend scripts and styles
 	 */
 	function frontend_scripts() {
-
+    //HACK: this should be an option for those that don't require badge sharing
+    //to avoid extra script payloads on every page
+    return;
 		$data = array(
 			'ajax_url'        => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
 			'message'         => __( 'Would you like to display this badge on social networks and add it to your lifelong badge collection?', 'badgeos' ),

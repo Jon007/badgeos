@@ -240,6 +240,8 @@ function badgeos_is_achievement_sequential( $achievement_id = 0 ) {
 	// Grab the current post ID if no achievement_id was specified
 	if ( ! $achievement_id ) {
 		global $post;
+    //FIX: do NOT process if no post found
+    if (! $post){return false;}
 		$achievement_id = $post->ID;
 	}
 
@@ -407,10 +409,13 @@ function badgeos_get_user_earned_achievement_ids( $user_id = 0, $achievement_typ
 function badgeos_get_user_earned_achievement_types( $user_id = 0 ){
 
 	$achievements = badgeos_get_user_achievements( array( 'user_id' => $user_id ) );
-
-	$achievement_types = wp_list_pluck( $achievements, 'post_type' );
-
-	return array_unique( $achievement_types );
+  //FIX: do NOT process if no achievements found
+  if ($achievements){
+      $achievement_types = wp_list_pluck( $achievements, 'post_type' );
+      return array_unique( $achievement_types );
+  } else {
+      return false;
+  }
 }
 
 /**
