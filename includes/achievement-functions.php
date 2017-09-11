@@ -391,9 +391,12 @@ function badgeos_get_user_earned_achievement_ids( $user_id = 0, $achievement_typ
 		'display' => true
 	) );
 
-	foreach ( $earned_achievements as $achievement )
+    //FIX: check we have a result before proceeding
+    if ($earned_achievements){
+        foreach ( $earned_achievements as $achievement ){            
 		$earned_ids[] = $achievement->ID;
-
+        }
+    }
 	return $earned_ids;
 
 }
