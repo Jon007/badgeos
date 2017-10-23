@@ -141,7 +141,9 @@ jQuery( function( $ ) {
 							$( '#badgeos-achievements-container' ).append( response.data.message );
 							$( '#badgeos_achievements_offset' ).val( response.data.offset );
 							$( '#badgeos_achievements_count' ).val( response.data.badge_count );
-							credlyize();
+							if ( 'undefined' != typeof BadgeosCredlyData ) {
+							  credlyize();
+							}
 							//hide/show load more button
 							if ( response.data.query_count <= response.data.badge_count ) {
 								$( '#achievements_list_load_more' ).hide();
