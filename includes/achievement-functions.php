@@ -580,6 +580,10 @@ add_action( 'trash_post', 'badgeos_bust_points_based_achievements_cache' );
  */
 function badgeos_get_achievement_post_thumbnail( $post_id = 0, $image_size = 'badgeos-achievement', $class = 'badgeos-item-thumbnail' ) {
 
+    //JM: found this code generating badgeos image sizes for all posts!!!!
+    if (! badgeos_is_achievement( $post ) ) {return;}
+
+    
 	// Get our badge thumbnail
 	$image = get_the_post_thumbnail( $post_id, $image_size, array( 'class' => $class ) );
 

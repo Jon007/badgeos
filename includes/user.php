@@ -136,6 +136,7 @@ function badgeos_user_profile_data( $user = null ) {
 		echo '</table>';
 
 	//verify uesr meets minimum role to view earned badges
+    if (! is_admin()){return;}
 	if ( current_user_can( badgeos_get_manager_capability() ) ) {
 
 		$achievements = badgeos_get_user_achievements( array( 'user_id' => absint( $user->ID ) ) );

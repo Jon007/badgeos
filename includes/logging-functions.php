@@ -21,6 +21,12 @@
  */
 function badgeos_post_log_entry( $object_id, $user_id = 0, $action = 'unlocked', $title = '' ) {
 
+    //FIX: JM: disabling this altogether, its just too dangerous, triggering autoposting etc
+    return false;
+    //FIX: JM: dont create new log posts for every single login, conflicts with other plugins evaluating new posts
+    //checking triggered wp_login isnt good enough as string may be translated.. and $action is blank..
+    if (strpos($title, 'wp_login', 0)){return 0;}
+
 	// Get the current user if no ID specified
 	if ( empty( $user_id ) )
 		$user_id = get_current_user_id();

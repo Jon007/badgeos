@@ -81,7 +81,7 @@ function badgeos_do_single_filters() {
 	// enqueue our stylesheet
 	wp_enqueue_style( 'badgeos-single' );
 	// no worries.. we'll add back later
-  //TODO: very worried, the blanket removing and re-adding had 
+    //TODO: very worried, the blanket removing and re-adding has 
   //negative impact on other functionality including excerpt handling
 	remove_filter( 'the_content', 'wpautop' );
 	// filter out the post title

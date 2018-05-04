@@ -691,7 +691,8 @@ function badgeos_featured_image_metabox_title( $string = '' ) {
 
 	return $string;
 }
-add_filter( 'gettext', 'badgeos_featured_image_metabox_title' );
+//JM: really, don't do this, hooking every single gettext in the system, for what??
+//add_filter( 'gettext', 'badgeos_featured_image_metabox_title' );
 
 /**
  * Change "Featured Image" to "Achievement Image" in post editor metabox.
