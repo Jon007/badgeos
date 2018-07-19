@@ -23,7 +23,7 @@ function badgeos_is_achievement( $post = null ) {
 	$return = true;
 
 	// If post type is NOT a registered achievement type, it cannot be an achievement
-	if ( ! in_array( get_post_type( $post ), badgeos_get_achievement_types_slugs() ) ) {
+	if ( (! $post) || (! in_array( get_post_type( $post ), badgeos_get_achievement_types_slugs() ) ) ){
 		$return = false;
 	}
 
@@ -581,8 +581,7 @@ add_action( 'trash_post', 'badgeos_bust_points_based_achievements_cache' );
 function badgeos_get_achievement_post_thumbnail( $post_id = 0, $image_size = 'badgeos-achievement', $class = 'badgeos-item-thumbnail' ) {
 
     //JM: found this code generating badgeos image sizes for all posts!!!!
-    if (! badgeos_is_achievement( $post ) ) {return;}
-
+    if (! badgeos_is_achievement( $post_id ) ) {return;}
     
 	// Get our badge thumbnail
 	$image = get_the_post_thumbnail( $post_id, $image_size, array( 'class' => $class ) );
