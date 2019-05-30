@@ -43,6 +43,10 @@ class BadgeOS {
 
 		// Load translations
 		load_plugin_textdomain( 'badgeos', false, 'badgeos/languages' );
+		//JM: some weird errors are logged from badgeos activating when it shouldn't, try to minimize this
+		if ( wp_doing_ajax() ) {
+			return;
+		}
 
 		// Setup our activation and deactivation hooks
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );

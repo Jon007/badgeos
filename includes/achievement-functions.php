@@ -353,6 +353,9 @@ function badgeos_get_hidden_achievement_ids( $achievement_type = '' ) {
 
 function badgeos_get_hidden_achievement_by_id( $achievement_id ) {
 
+	//JM: this evil function is called thousands of times repeating the same query
+	return false;
+
 	// Grab our hidden achievements
 	global $wpdb;
 
