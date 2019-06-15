@@ -8,6 +8,9 @@
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 
 // Setup our badgeos AJAX actions
 $badgeos_ajax_actions = array(

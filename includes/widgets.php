@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
+
 // use widgets_init action hook to execute custom function
 add_action( 'widgets_init', 'badgeos_register_widgets' );
 

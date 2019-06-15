@@ -8,6 +8,8 @@
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 
 /**
  * Register BadgeOS Settings with Settings API.

@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 /**
  * Rules Engine: The brains behind this whole operation
  *

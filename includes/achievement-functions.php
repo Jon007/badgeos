@@ -8,6 +8,8 @@
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 
 /**
  * Check if post is a registered BadgeOS achievement.
@@ -196,6 +198,8 @@ function badgeos_get_parent_of_achievement( $achievement_id = 0 ) {
 	// Grab the current post ID if no achievement_id was specified
 	if ( ! $achievement_id ) {
 		global $post;
+
+		if ( !$post ) { return false; }
 		$achievement_id = $post->ID;
 	}
 
@@ -290,7 +294,7 @@ function badgeos_achievement_user_exceeded_max_earnings( $user_id = 0, $achievem
  * @param  string  $context        The context in which we're creating this object
  * @return object                  Our object containing only the relevant bits of information we want
  */
-function badgeos_build_achievement_object( $achievement_id = 0, $context = 'earned' ) {
+function badgeos_build_achievement_object( $achievement_id = 0, $context = 'earned', $trigger='' ) {
 
 	// Grab the new achievement's $post data, and bail if it doesn't exist
 	$achievement = get_post( $achievement_id );
@@ -300,8 +304,16 @@ function badgeos_build_achievement_object( $achievement_id = 0, $context = 'earn
 	// Setup a new object for the achievement
 	$achievement_object            = new stdClass;
 	$achievement_object->ID        = $achievement_id;
+    $achievement_object->title        	= $achievement->post_title;
+    $achievement_object->the_trigger  	= $trigger;
 	$achievement_object->post_type = $achievement->post_type;
 	$achievement_object->points    = get_post_meta( $achievement_id, '_badgeos_points', true );
+
+    if( !empty( $trigger ) ) {
+        $achievement_object->trigger   = $trigger;
+    } else {
+        $achievement_object->trigger   = '';
+    }
 
 	// Store the current timestamp differently based on context
 	if ( 'earned' == $context ) {
@@ -468,8 +480,19 @@ function badgeos_get_dependent_achievements( $achievement_id = 0 ) {
 	// Merge our dependent achievements together
 	$achievements = array_merge( $specific_achievements, $type_achievements );
 
+    if( !is_array( $GLOBALS['badgeos']->award_ids ) || count( $GLOBALS['badgeos']->award_ids ) == 0 ) {
+        $GLOBALS['badgeos']->award_ids = [];
+    }
+
+    $new_list = array();
+    foreach($achievements as $achievement ) {
+        if( ! in_array( $achievement->ID, $GLOBALS['badgeos']->award_ids ) ) {
+            $new_list[] = $achievement;
+        }
+    }
+
 	// Available filter to modify an achievement's dependents
-	return apply_filters( 'badgeos_dependent_achievements', $achievements, $achievement_id );
+	return apply_filters( 'badgeos_dependent_achievements', $new_list, $achievement_id );
 }
 
 /**

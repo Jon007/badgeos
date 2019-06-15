@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 /**
  * Activity Triggers, used for triggering achievement earning
  *
