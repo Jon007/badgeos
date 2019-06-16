@@ -480,7 +480,9 @@ function badgeos_get_dependent_achievements( $achievement_id = 0 ) {
 	// Merge our dependent achievements together
 	$achievements = array_merge( $specific_achievements, $type_achievements );
 
-    if( !is_array( $GLOBALS['badgeos']->award_ids ) || count( $GLOBALS['badgeos']->award_ids ) == 0 ) {
+	/* this code seems to belong to other version of plugin?
+	  if ( ! is_array( $GLOBALS[ 'badgeos' ]->award_ids ) ||
+	  count( $GLOBALS[ 'badgeos' ]->award_ids ) == 0 ) {
         $GLOBALS['badgeos']->award_ids = [];
     }
 
@@ -493,6 +495,9 @@ function badgeos_get_dependent_achievements( $achievement_id = 0 ) {
 
 	// Available filter to modify an achievement's dependents
 	return apply_filters( 'badgeos_dependent_achievements', $new_list, $achievement_id );
+	 */
+	// Available filter to modify an achievement's dependents
+	return apply_filters( 'badgeos_dependent_achievements', $achievements, $achievement_id );
 }
 
 /**
