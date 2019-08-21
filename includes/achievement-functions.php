@@ -446,6 +446,10 @@ function badgeos_get_user_earned_achievement_types( $user_id = 0 ){
 function badgeos_get_dependent_achievements( $achievement_id = 0 ) {
 	global $wpdb;
 
+	if ( ! $GLOBALS[ 'badgeos' ] ) {
+		return false;
+	}
+
 	// Grab the current achievement ID if none specified
 	if ( ! $achievement_id ) {
 		global $post;
