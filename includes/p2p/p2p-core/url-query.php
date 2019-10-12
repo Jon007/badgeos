@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_URL_Query {
 
 	static function get_custom_qv() {

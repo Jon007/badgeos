@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 /**
  * A column in a list table in wp-admin
  */

@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 //widget displays achievements earned for the logged in user
 class earned_user_achievements_widget extends WP_Widget {
 

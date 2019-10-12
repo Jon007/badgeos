@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Side_Attachment extends P2P_Side_Post {
 
 	protected $item_type = 'P2P_Item_Attachment';

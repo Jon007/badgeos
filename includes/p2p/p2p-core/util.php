@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 /** @internal */
 function p2p_list_cluster( $items, $callback ) {
 	return scb_list_group_by( $items, $callback );

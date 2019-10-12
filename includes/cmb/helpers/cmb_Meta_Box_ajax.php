@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 /**
  * CMB ajax methods
  * (i.e. a lot of work to get oEmbeds to work with non-post objects)

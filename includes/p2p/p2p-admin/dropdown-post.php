@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Dropdown_Post extends P2P_Dropdown {
 
 	function __construct( $directed, $title ) {

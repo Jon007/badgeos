@@ -1,30 +1,30 @@
 <?php
+
 /**
-* Plugin Name: BadgeOS
-* Plugin URI: http://www.badgeos.org/
-* Description: BadgeOS lets your site’s users complete tasks and earn badges that recognize their achievement.  Define achievements and choose from a range of options that determine when they're complete.  Badges are Mozilla Open Badges (OBI) compatible through integration with the “Open Credit” API by Credly, the free web service for issuing, earning and sharing badges for lifelong achievement.
-* Author: LearningTimes 1.4.8.3 with fixes by J.Moore
+ * Plugin Name: BadgeOS
+ * Plugin URI: http://www.badgeos.org/
+ * Description: BadgeOS lets your site’s users complete tasks and earn badges that recognize their achievement.  Define achievements and choose from a range of options that determine when they're complete.  Badges are Mozilla Open Badges (OBI) compatible through integration with the “Open Credit” API by Credly, the free web service for issuing, earning and sharing badges for lifelong achievement.
+ * Author: LearningTimes 1.4.8.3 with fixes by J.Moore
  * Version: 9.1.4.8
-* Author URI: https://credly.com/
-* License: GNU AGPL
-* Text Domain: badgeos
-*/
-
+ * Author URI: https://credly.com/
+ * License: GNU AGPL
+ * Text Domain: badgeos
+ */
 /*
-Copyright © 2012-2014 LearningTimes, LLC
+  Copyright © 2012-2014 LearningTimes, LLC
 
-This program is free software: you can redistribute it and/or modify it
-under the terms of the GNU Affero General Public License, version 3,
-as published by the Free Software Foundation.
+  This program is free software: you can redistribute it and/or modify it
+  under the terms of the GNU Affero General Public License, version 3,
+  as published by the Free Software Foundation.
 
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General
-Public License for more details.
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General
+  Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>;.
-*/
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>;.
+ */
 
 class BadgeOS {
 
@@ -37,9 +37,9 @@ class BadgeOS {
 
 	function __construct() {
 		// Define plugin constants
-		$this->basename       = plugin_basename( __FILE__ );
-		$this->directory_path = plugin_dir_path( __FILE__ );
-		$this->directory_url  = plugin_dir_url( __FILE__ );
+		$this->basename			 = plugin_basename( __FILE__ );
+		$this->directory_path	 = plugin_dir_path( __FILE__ );
+		$this->directory_url	 = plugin_dir_url( __FILE__ );
 
 		// Load translations
 		load_plugin_textdomain( 'badgeos', false, 'badgeos/languages' );
@@ -63,9 +63,8 @@ class BadgeOS {
 		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
 		add_action( 'init', array( $this, 'credly_init' ) );
 
-        //add action for adding ckeditor script
-        add_action('wp_footer', array( $this, 'frontend_scripts' ));
-
+		//add action for adding ckeditor script
+		add_action( 'wp_footer', array( $this, 'frontend_scripts' ) );
 	}
 
 	/**
@@ -112,19 +111,13 @@ class BadgeOS {
 		// Register styles
 		wp_register_style( 'badgeos-admin-styles', $this->directory_url . 'css/admin.css' );
 
-		$badgeos_front = file_exists( get_stylesheet_directory() .'/badgeos.css' )
-			? get_stylesheet_directory_uri() .'/badgeos.css'
-			: $this->directory_url . 'css/badgeos-front.css';
+		$badgeos_front = file_exists( get_stylesheet_directory() . '/badgeos.css' ) ? get_stylesheet_directory_uri() . '/badgeos.css' : $this->directory_url . 'css/badgeos-front.css';
 		wp_register_style( 'badgeos-front', $badgeos_front, null, '1.0.1' );
 
-		$badgeos_single = file_exists( get_stylesheet_directory() .'/badgeos-single.css' )
-			? get_stylesheet_directory_uri() .'/badgeos-single.css'
-			: $this->directory_url . 'css/badgeos-single.css';
+		$badgeos_single = file_exists( get_stylesheet_directory() . '/badgeos-single.css' ) ? get_stylesheet_directory_uri() . '/badgeos-single.css' : $this->directory_url . 'css/badgeos-single.css';
 		wp_register_style( 'badgeos-single', $badgeos_single, null, '1.0.1' );
 
-		$badgeos_widget = file_exists( get_stylesheet_directory() .'/badgeos-widgets.css' )
-			? get_stylesheet_directory_uri() .'/badgeos-widgets.css'
-			: $this->directory_url . 'css/badgeos-widgets.css';
+		$badgeos_widget = file_exists( get_stylesheet_directory() . '/badgeos-widgets.css' ) ? get_stylesheet_directory_uri() . '/badgeos-widgets.css' : $this->directory_url . 'css/badgeos-widgets.css';
 		wp_register_style( 'badgeos-widget', $badgeos_widget, null, '1.0.1' );
 	}
 
@@ -132,8 +125,10 @@ class BadgeOS {
 	 * Initialize CMB.
 	 */
 	function include_cmb() {
-	  //FIX: avoid loading admin scripts on front end
-    if (! is_admin()){return;}
+		//FIX: only needed in admin
+		if ( ! is_admin() ) {
+			return;
+		}
 		require_once( $this->directory_path . 'includes/cmb/load.php' );
 	}
 
@@ -150,15 +145,15 @@ class BadgeOS {
 				// Connect steps to each achievement type
 				// Used to get an achievement's required steps (e.g. This badge requires these 3 steps)
 				p2p_register_connection_type( array(
-					'name'      => 'step-to-' . $achievement_type,
-					'from'      => 'step',
-					'to'        => $achievement_type,
-					'admin_box' => false,
-					'fields'    => array(
-						'order'   => array(
-							'title'   => __( 'Order', 'badgeos' ),
-							'type'    => 'text',
-							'default' => 0,
+					'name'		 => 'step-to-' . $achievement_type,
+					'from'		 => 'step',
+					'to'		 => $achievement_type,
+					'admin_box'	 => false,
+					'fields'	 => array(
+						'order' => array(
+							'title'		 => __( 'Order', 'badgeos' ),
+							'type'		 => 'text',
+							'default'	 => 0,
 						),
 					),
 				) );
@@ -166,22 +161,20 @@ class BadgeOS {
 				// Connect each achievement type to a step
 				// Used to get a step's required achievement (e.g. this step requires earning Level 1)
 				p2p_register_connection_type( array(
-					'name'      => $achievement_type . '-to-step',
-					'from'      => $achievement_type,
-					'to'        => 'step',
-					'admin_box' => false,
-					'fields'    => array(
-						'order'   => array(
-							'title'   => __( 'Order', 'badgeos' ),
-							'type'    => 'text',
-							'default' => 0,
+					'name'		 => $achievement_type . '-to-step',
+					'from'		 => $achievement_type,
+					'to'		 => 'step',
+					'admin_box'	 => false,
+					'fields'	 => array(
+						'order' => array(
+							'title'		 => __( 'Order', 'badgeos' ),
+							'type'		 => 'text',
+							'default'	 => 0,
 						),
 					),
 				) );
-
 			}
 		}
-
 	}
 
 	/**
@@ -200,41 +193,41 @@ class BadgeOS {
 		$this->includes();
 
 		// Create Badges achievement type
-		if ( !get_page_by_title( 'Badges', 'OBJECT', 'achievement-type' ) ) {
+		if ( ! get_page_by_title( 'Badges', 'OBJECT', 'achievement-type' ) ) {
 			$badge_post_id = wp_insert_post( array(
-				'post_title'   => __( 'Badges', 'badgeos'),
-				'post_content' => __( 'Badges badge type', 'badgeos' ),
-				'post_status'  => 'publish',
-				'post_author'  => 1,
-				'post_type'    => 'achievement-type',
+				'post_title'	 => __( 'Badges', 'badgeos' ),
+				'post_content'	 => __( 'Badges badge type', 'badgeos' ),
+				'post_status'	 => 'publish',
+				'post_author'	 => 1,
+				'post_type'		 => 'achievement-type',
 			) );
 			update_post_meta( $badge_post_id, '_badgeos_singular_name', __( 'Badge', 'badgeos' ) );
 			update_post_meta( $badge_post_id, '_badgeos_show_in_menu', true );
 		}
 
 		// Setup default BadgeOS options
-		$badgeos_settings = ( $exists = get_option( 'badgeos_settings' ) ) ? $exists : array();
+		$badgeos_settings	 = ( $exists				 = get_option( 'badgeos_settings' ) ) ? $exists : array();
 		if ( empty( $badgeos_settings ) ) {
-			$badgeos_settings['minimum_role']     = 'manage_options';
-			$badgeos_settings['submission_manager_role'] = 'manage_options';
-			$badgeos_settings['submission_email'] = 'enabled';
-			$badgeos_settings['debug_mode']       = 'disabled';
+			$badgeos_settings[ 'minimum_role' ]				 = 'manage_options';
+			$badgeos_settings[ 'submission_manager_role' ]	 = 'manage_options';
+			$badgeos_settings[ 'submission_email' ]			 = 'enabled';
+			$badgeos_settings[ 'debug_mode' ]				 = 'disabled';
 			update_option( 'badgeos_settings', $badgeos_settings );
 		}
 
 		// Setup default Credly options
-		$credly_settings = (array) get_option( 'credly_settings', array() );
+		$credly_settings = ( array ) get_option( 'credly_settings', array() );
 
-		if ( empty( $credly_settings ) || !isset( $credly_settings[ 'credly_enable' ] ) ) {
-			$credly_settings['credly_enable']                      = 'true';
-			$credly_settings['credly_badge_title']                 = 'post_title';
-			$credly_settings['credly_badge_description']           = 'post_body';
-			$credly_settings['credly_badge_short_description']     = 'post_excerpt';
-			$credly_settings['credly_badge_criteria']              = '';
-			$credly_settings['credly_badge_image']                 = 'featured_image';
-			$credly_settings['credly_badge_testimonial']           = 'congratulations_text';
-			$credly_settings['credly_badge_evidence']              = 'permalink';
-			$credly_settings['credly_badge_sendemail_add_message'] = 'false';
+		if ( empty( $credly_settings ) || ! isset( $credly_settings[ 'credly_enable' ] ) ) {
+			$credly_settings[ 'credly_enable' ]						 = 'true';
+			$credly_settings[ 'credly_badge_title' ]				 = 'post_title';
+			$credly_settings[ 'credly_badge_description' ]			 = 'post_body';
+			$credly_settings[ 'credly_badge_short_description' ]	 = 'post_excerpt';
+			$credly_settings[ 'credly_badge_criteria' ]				 = '';
+			$credly_settings[ 'credly_badge_image' ]				 = 'featured_image';
+			$credly_settings[ 'credly_badge_testimonial' ]			 = 'congratulations_text';
+			$credly_settings[ 'credly_badge_evidence' ]				 = 'permalink';
+			$credly_settings[ 'credly_badge_sendemail_add_message' ] = 'false';
 			update_option( 'credly_settings', $credly_settings );
 		}
 
@@ -258,7 +251,6 @@ class BadgeOS {
 		add_submenu_page( 'badgeos_badgeos', __( 'Credly Integration', 'badgeos' ), __( 'Credly Integration', 'badgeos' ), $minimum_role, 'badgeos_sub_credly_integration', 'badgeos_credly_options_page' );
 		add_submenu_page( 'badgeos_badgeos', __( 'Add-Ons', 'badgeos' ), __( 'Add-Ons', 'badgeos' ), $minimum_role, 'badgeos_sub_add_ons', 'badgeos_add_ons_page' );
 		add_submenu_page( 'badgeos_badgeos', __( 'Help / Support', 'badgeos' ), __( 'Help / Support', 'badgeos' ), $minimum_role, 'badgeos_sub_help_support', 'badgeos_help_support_page' );
-
 	}
 
 	/**
@@ -272,7 +264,6 @@ class BadgeOS {
 
 		// Load styles
 		wp_enqueue_style( 'badgeos-admin-styles' );
-
 	}
 
 	/**
@@ -281,28 +272,25 @@ class BadgeOS {
 	function frontend_scripts() {
     //HACK: this should be an option for those that don't require badge sharing
     //to avoid extra script payloads on every page
-    return;
+		return;
 		$data = array(
-			'ajax_url'        => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
-			'message'         => __( 'Would you like to display this badge on social networks and add it to your lifelong badge collection?', 'badgeos' ),
-			'confirm'         => __( 'Yes, send to Credly', 'badgeos' ),
-			'cancel'          => __( 'Cancel', 'badgeos' ),
-			'share'           => __( 'Share on Credly!', 'badgeos' ),
-			'localized_error' => __( 'Error:', 'badgeos' ),
-			'errormessage'    => __( 'Error: Timed out', 'badgeos' )
+			'ajax_url'			 => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
+			'message'			 => __( 'Would you like to display this badge on social networks and add it to your lifelong badge collection?', 'badgeos' ),
+			'confirm'			 => __( 'Yes, send to Credly', 'badgeos' ),
+			'cancel'			 => __( 'Cancel', 'badgeos' ),
+			'share'				 => __( 'Share on Credly!', 'badgeos' ),
+			'localized_error'	 => __( 'Error:', 'badgeos' ),
+			'errormessage'		 => __( 'Error: Timed out', 'badgeos' )
 		);
 		wp_localize_script( 'badgeos-achievements', 'BadgeosCredlyData', $data );
 
-        wp_enqueue_script(
-            'ck_editor_cdn',
-            ('https://cdn.ckeditor.com/4.5.3/standard/ckeditor.js'), false, null, false
-        );
+		wp_enqueue_script(
+		'ck_editor_cdn', ('https://cdn.ckeditor.com/4.5.3/standard/ckeditor.js' ), false, null, false
+		);
 
-        wp_enqueue_script(
-           'custom_script',
-            plugins_url( '/js/ckeditor.js' , __FILE__ ),
-            false,null,true
-        );
+		wp_enqueue_script(
+		'custom_script', plugins_url( '/js/ckeditor.js', __FILE__ ), false, null, true
+		);
 	}
 
 	/**
@@ -319,13 +307,12 @@ class BadgeOS {
 	function credly_init() {
 
 		// Initalize the CredlyAPI class
-		$GLOBALS['badgeos_credly'] = new BadgeOS_Credly();
-
+		$GLOBALS[ 'badgeos_credly' ] = new BadgeOS_Credly();
 	}
 
 }
-$GLOBALS['badgeos'] = new BadgeOS();
 
+$GLOBALS[ 'badgeos' ] = new BadgeOS();
 /**
  * Get our plugin's directory path
  *
@@ -333,7 +320,7 @@ $GLOBALS['badgeos'] = new BadgeOS();
  * @return string The filepath of the BadgeOS plugin root directory
  */
 function badgeos_get_directory_path() {
-	return $GLOBALS['badgeos']->directory_path;
+	return $GLOBALS[ 'badgeos' ]->directory_path;
 }
 
 /**
@@ -343,7 +330,7 @@ function badgeos_get_directory_path() {
  * @return string The URL for the BadgeOS plugin root directory
  */
 function badgeos_get_directory_url() {
-	return $GLOBALS['badgeos']->directory_url;
+	return $GLOBALS[ 'badgeos' ]->directory_url;
 }
 
 /**
@@ -355,13 +342,12 @@ function badgeos_get_directory_url() {
 function badgeos_is_debug_mode() {
 
 	//get setting for debug mode
-	$badgeos_settings = get_option( 'badgeos_settings' );
-	$debug_mode = ( !empty( $badgeos_settings['debug_mode'] ) ) ? $badgeos_settings['debug_mode'] : 'disabled';
+	$badgeos_settings	 = get_option( 'badgeos_settings' );
+	$debug_mode			 = ( ! empty( $badgeos_settings[ 'debug_mode' ] ) ) ? $badgeos_settings[ 'debug_mode' ] : 'disabled';
 
 	if ( $debug_mode == 'enabled' ) {
 		return true;
 	}
 
 	return false;
-
 }

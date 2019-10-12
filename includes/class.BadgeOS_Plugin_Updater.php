@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Add-on Updater Class
  *
@@ -22,12 +23,12 @@ if ( ! defined( 'ABSPATH' ) )
  */
 class BadgeOS_Plugin_Updater {
 
-	private $api_url   = '';
-	private $api_data  = array();
-	private $name      = '';
-	private $slug      = '';
-	private $version   = '';
-	private $item_name = '';
+	private $api_url	 = '';
+	private $api_data	 = array();
+	private $name		 = '';
+	private $slug		 = '';
+	private $version	 = '';
+	private $item_name	 = '';
 
 	/**
 	 * Class constructor.
@@ -42,16 +43,16 @@ class BadgeOS_Plugin_Updater {
 	function __construct( $_api_data = null ) {
 
 		// Setup our add-on data
-		$this->api_data  = urlencode_deep( $_api_data );
-		$this->api_url   = 'http://badgeos.org/';
-		$this->name      = plugin_basename( $_api_data['plugin_file'] );
-		$this->slug      = basename( $_api_data['plugin_file'], '.php' );
-		$this->version   = $_api_data['version'];
-		$this->item_name = $_api_data['item_name'];
+		$this->api_data	 = urlencode_deep( $_api_data );
+		$this->api_url	 = 'http://badgeos.org/';
+		$this->name		 = plugin_basename( $_api_data[ 'plugin_file' ] );
+		$this->slug		 = basename( $_api_data[ 'plugin_file' ], '.php' );
+		$this->version	 = $_api_data[ 'version' ];
+		$this->item_name = $_api_data[ 'item_name' ];
 
 		// Setup the license
-		$this->api_data['license'] = trim( get_option( $this->slug . '-license_key' ) );
-		$this->api_data['license_status'] = trim( get_option( $this->slug . '-license_status' ) );
+		$this->api_data[ 'license' ]			 = trim( get_option( $this->slug . '-license_key' ) );
+		$this->api_data[ 'license_status' ]	 = trim( get_option( $this->slug . '-license_status' ) );
 
 		// Set up hooks.
 		$this->hook();
@@ -79,13 +80,12 @@ class BadgeOS_Plugin_Updater {
 	public function validate_license( $input ) {
 
 		// Activate our license if we have license data
-		if ( isset( $input['licenses'][$this->slug] ) && ! empty( $input['licenses'][$this->slug] ) )
-			$this->activate_license( $input['licenses'][$this->slug] );
+		if ( isset( $input[ 'licenses' ][ $this->slug ] ) && ! empty( $input[ 'licenses' ][ $this->slug ] ) )
+			$this->activate_license( $input[ 'licenses' ][ $this->slug ] );
 
 		// Otherwise, deactivate the previous license
 		else
 			$this->deactivate_license();
-
 	}
 
 	/**
@@ -99,7 +99,7 @@ class BadgeOS_Plugin_Updater {
 	public function register_licensed_addon( $licensed_addons ) {
 
 		// Add our add-on to the array
-		$licensed_addons[$this->slug] = $this->api_data;
+		$licensed_addons[ $this->slug ] = $this->api_data;
 
 		// Return all licensed add-ons
 		return $licensed_addons;
@@ -120,20 +120,20 @@ class BadgeOS_Plugin_Updater {
 	 */
 	function pre_set_site_transient_update_plugins_filter( $_transient_data ) {
 
-		if ( empty( $_transient_data ) ) return $_transient_data;
+		if ( empty( $_transient_data ) )
+			return $_transient_data;
 
 		$to_send = array( 'slug' => $this->slug );
 
 		$api_response = $this->api_request( 'plugin_latest_version', $to_send );
 
 		if ( false !== $api_response && is_object( $api_response ) && isset( $api_response->new_version ) ) {
-			if( version_compare( $this->version, $api_response->new_version, '<' ) )
-				$_transient_data->response[$this->name] = $api_response;
+			if ( version_compare( $this->version, $api_response->new_version, '<' ) )
+				$_transient_data->response[ $this->name ] = $api_response;
 		}
 
 		return $_transient_data;
 	}
-
 
 	/**
 	 * Updates information on the "View version x.x details" page with custom data.
@@ -146,12 +146,14 @@ class BadgeOS_Plugin_Updater {
 	 * @return object $_data
 	 */
 	function plugins_api_filter( $_data, $_action = '', $_args = null ) {
-		if ( ( $_action != 'plugin_information' ) || !isset( $_args->slug ) || ( $_args->slug != $this->slug ) ) return $_data;
+		if ( ( $_action != 'plugin_information' ) || ! isset( $_args->slug ) || ( $_args->slug != $this->slug ) )
+			return $_data;
 
 		$to_send = array( 'slug' => $this->slug );
 
-		$api_response = $this->api_request( 'plugin_information', $to_send );
-		if ( false !== $api_response ) $_data = $api_response;
+		$api_response	 = $this->api_request( 'plugin_information', $to_send );
+		if ( false !== $api_response )
+			$_data			 = $api_response;
 
 		return $_data;
 	}
@@ -169,25 +171,25 @@ class BadgeOS_Plugin_Updater {
 
 		$data = array_merge( $this->api_data, $_data );
 
-		if ( $data['slug'] != $this->slug )
+		if ( $data[ 'slug' ] != $this->slug )
 			return;
 
-		if ( empty( $data['license'] ) )
+		if ( empty( $data[ 'license' ] ) )
 			return;
 
-		$api_params = array(
+		$api_params	 = array(
 			'edd_action' => 'get_version',
-			'license'    => $data['license'],
-			'name'       => $data['item_name'],
-			'slug'       => $this->slug,
-			'author'     => $data['author']
+			'license'	 => $data[ 'license' ],
+			'name'		 => $data[ 'item_name' ],
+			'slug'		 => $this->slug,
+			'author'	 => $data[ 'author' ]
 		);
-		$request = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+		$request	 = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 
 		if ( ! is_wp_error( $request ) ) {
-			$request = json_decode( wp_remote_retrieve_body( $request ) );
+			$request			 = json_decode( wp_remote_retrieve_body( $request ) );
 			if ( $request && isset( $request->sections ) )
-				$request->sections = maybe_unserialize( $request->sections );
+				$request->sections	 = maybe_unserialize( $request->sections );
 			return $request;
 		} else {
 			return false;
@@ -212,15 +214,16 @@ class BadgeOS_Plugin_Updater {
 		if ( ! check_admin_referer( 'badgeos_settings_nonce', 'badgeos_settings_nonce' ) )
 			return; // get out if we didn't click the Activate button
 
-		// If the license hasn't changed, bail here
-		if ( $license == $this->api_data['license'] && 'valid' == $this->api_data['license_status'] )
+
+// If the license hasn't changed, bail here
+		if ( $license == $this->api_data[ 'license' ] && 'valid' == $this->api_data[ 'license_status' ] )
 			return false;
 
 		// Setup our API Request data
 		$api_params = array(
 			'edd_action' => 'activate_license',
-			'license'    => trim( $license ),
-			'item_name'  => urlencode( $this->item_name )
+			'license'	 => trim( $license ),
+			'item_name'	 => urlencode( $this->item_name )
 		);
 
 		// Call the remote API
@@ -239,7 +242,6 @@ class BadgeOS_Plugin_Updater {
 		update_option( $this->slug . '-license_status', $license_data->license );
 
 		return true;
-
 	}
 
 	/**
@@ -253,7 +255,8 @@ class BadgeOS_Plugin_Updater {
 		if ( ! check_admin_referer( 'badgeos_settings_nonce', 'badgeos_settings_nonce' ) )
 			return false; // get out if we didn't click the Activate button
 
-		// Retrieve the license from the database
+
+// Retrieve the license from the database
 		$license = trim( get_option( $this->slug . '-license_key' ) );
 
 		// If there isn't one, bail here
@@ -263,8 +266,8 @@ class BadgeOS_Plugin_Updater {
 		// Setup our API Request data
 		$api_params = array(
 			'edd_action' => 'deactivate_license',
-			'license'    => $license,
-			'item_name'  => urlencode( $this->item_name ) // the name of our product in EDD
+			'license'	 => $license,
+			'item_name'	 => urlencode( $this->item_name ) // the name of our product in EDD
 		);
 
 		// Call the custom API.
@@ -298,8 +301,8 @@ class BadgeOS_Plugin_Updater {
 
 		$api_params = array(
 			'edd_action' => 'check_license',
-			'license'    => $license,
-			'item_name'  => urlencode( $this->item_name )
+			'license'	 => $license,
+			'item_name'	 => urlencode( $this->item_name )
 		);
 
 		// Call the custom API.
@@ -311,11 +314,13 @@ class BadgeOS_Plugin_Updater {
 
 		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
 
-		if( 'valid' == $license_data->license ) {
-			echo 'valid'; exit;
+		if ( 'valid' == $license_data->license ) {
+			echo 'valid';
+			exit;
 			// this license is still valid
 		} else {
-			echo 'invalid'; exit;
+			echo 'invalid';
+			exit;
 			// this license is no longer valid
 		}
 	}

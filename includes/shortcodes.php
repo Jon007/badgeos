@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_achievements_list.php' );
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_achievement.php' );
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_nomination.php' );
@@ -19,7 +18,6 @@ include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_n
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_submission.php' );
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/badgeos_submissions.php' );
 include( plugin_dir_path( dirname( __FILE__ ) ) . 'includes/shortcodes/credly_assertion_page.php' );
-
 /**
  * Register a new BadgeOS Shortcode
  *
@@ -53,8 +51,8 @@ function badgeos_help_support_page_shortcodes() {
 		badgeos_shortcode_help_render_help( $shortcode );
 	}
 }
-add_action( 'badgeos_help_support_page_shortcodes', 'badgeos_help_support_page_shortcodes' );
 
+add_action( 'badgeos_help_support_page_shortcodes', 'badgeos_help_support_page_shortcodes' );
 /**
  * Render help section for a given shortcode.
  *
@@ -64,7 +62,7 @@ add_action( 'badgeos_help_support_page_shortcodes', 'badgeos_help_support_page_s
  */
 function badgeos_shortcode_help_render_help( $shortcode = array() ) {
 	printf(
-		'
+	'
 		<hr/>
 		<h3>%1$s &ndash; [%2$s]</h3>
 		<p>%3$s</p>
@@ -73,13 +71,7 @@ function badgeos_shortcode_help_render_help( $shortcode = array() ) {
 		%5$s
 		</ul>
 		<p>%6$s</p>
-		',
-		$shortcode->name,
-		$shortcode->slug,
-		$shortcode->description,
-		__( 'Attributes:', 'badgeos' ),
-		badgeos_shortcode_help_render_attributes( $shortcode->attributes ),
-		badgeos_shortcode_help_render_example( $shortcode )
+		', $shortcode->name, $shortcode->slug, $shortcode->description, __( 'Attributes:', 'badgeos' ), badgeos_shortcode_help_render_attributes( $shortcode->attributes ), badgeos_shortcode_help_render_example( $shortcode )
 	);
 }
 
@@ -95,16 +87,11 @@ function badgeos_shortcode_help_render_attributes( $attributes ) {
 	$output = '';
 	if ( ! empty( $attributes ) ) {
 		foreach ( $attributes as $attribute => $details ) {
-			$accepts = ! empty( $details['values'] ) ? sprintf( __( 'Accepts: %s', 'badgeos' ), '<code>' . implode( ', ', $details['values'] ) . '</code>' ) : '';
-			$default = ! empty( $details['default'] ) ? sprintf( __( 'Default: %s', 'badgeos' ), '<code>' . $details['default'] . '</code>' ) : '';
-			$output .= sprintf(
-				'<li><strong>%1$s</strong> – %2$s <em>%3$s %4$s</em></li>',
-				esc_attr( $attribute ),
-				esc_html( $details['description'] ),
-				$accepts,
-				$default
+			$accepts = ! empty( $details[ 'values' ] ) ? sprintf( __( 'Accepts: %s', 'badgeos' ), '<code>' . implode( ', ', $details[ 'values' ] ) . '</code>' ) : '';
+			$default = ! empty( $details[ 'default' ] ) ? sprintf( __( 'Default: %s', 'badgeos' ), '<code>' . $details[ 'default' ] . '</code>' ) : '';
+			$output	 .= sprintf(
+			'<li><strong>%1$s</strong> – %2$s <em>%3$s %4$s</em></li>', esc_attr( $attribute ), esc_html( $details[ 'description' ] ), $accepts, $default
 			);
-
 		}
 	}
 	return $output;
@@ -119,9 +106,9 @@ function badgeos_shortcode_help_render_attributes( $attributes ) {
  * @return string            HTML Markup.
  */
 function badgeos_shortcode_help_render_example( $shortcode = array() ) {
-	$attributes = wp_list_pluck( $shortcode->attributes, 'default' );
-	$examples = array_map( 'badgeos_shortcode_help_attributes', array_keys( $attributes ), array_values( $attributes ) );
-	$flattened_examples = implode( ' ', $examples );
+	$attributes			 = wp_list_pluck( $shortcode->attributes, 'default' );
+	$examples			 = array_map( 'badgeos_shortcode_help_attributes', array_keys( $attributes ), array_values( $attributes ) );
+	$flattened_examples	 = implode( ' ', $examples );
 	return sprintf( __( 'Example: %s', 'badgeos' ), "<code>[{$shortcode->slug} {$flattened_examples}]</code>" );
 }
 
@@ -137,7 +124,6 @@ function badgeos_shortcode_help_render_example( $shortcode = array() ) {
 function badgeos_shortcode_help_attributes( $key, $value ) {
 	return "{$key}=\"$value\"";
 }
-
 
 /**
  * Handle Submissions/Nominations shortcode output
@@ -155,16 +141,16 @@ function badgeos_shortcode_submissions_handler( $atts = array(), $shortcode = ''
 
 	// Setup defaults and allow override
 	$defaults = array(
-		'type'             => 'submission',
-		'limit'            => '10',
-		'status'           => 'all',
-		'user_id'          => get_current_user_id(),
-		'show_filter'      => true,
-		'show_search'      => true,
-		'show_attachments' => true,
-		'show_comments'    => true,
-		'wpms'             => false,
-		'filters'          => array(
+		'type'				 => 'submission',
+		'limit'				 => '10',
+		'status'			 => 'all',
+		'user_id'			 => get_current_user_id(),
+		'show_filter'		 => true,
+		'show_search'		 => true,
+		'show_attachments'	 => true,
+		'show_comments'		 => true,
+		'wpms'				 => false,
+		'filters'			 => array(
 			'status' => '.badgeos-feedback-filter select',
 			'search' => '.badgeos-feedback-search-input',
 		),
@@ -177,8 +163,8 @@ function badgeos_shortcode_submissions_handler( $atts = array(), $shortcode = ''
 	$feedback_html = badgeos_render_feedback( $atts );
 
 	// AJAX url
-	$atts[ 'ajax_url' ] = esc_url( admin_url( 'admin-ajax.php', 'relative' ) );
-	$atts[ 'action' ]   = 'get-feedback';
+	$atts[ 'ajax_url' ]	 = esc_url( admin_url( 'admin-ajax.php', 'relative' ) );
+	$atts[ 'action' ]	 = 'get-feedback';
 
 	// Enqueue and localize our JS
 	wp_enqueue_script( 'badgeos-achievements' );
@@ -186,5 +172,4 @@ function badgeos_shortcode_submissions_handler( $atts = array(), $shortcode = ''
 
 	// Return initial feedback HTML
 	return $feedback_html;
-
 }

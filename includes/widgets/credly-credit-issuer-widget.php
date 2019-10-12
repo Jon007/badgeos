@@ -1,4 +1,8 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 //widget displays Credly credit issuer badge
 class credly_credit_issuer_widget extends WP_Widget {
 

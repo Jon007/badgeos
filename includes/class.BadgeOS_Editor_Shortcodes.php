@@ -68,7 +68,8 @@ class BadgeOS_Editor_Shortcodes {
 	 *
 	 * @since 1.4.0
 	 */
-	public function render_modal() { ?>
+	public function render_modal() {
+	    ?>
 		<div id="select_badgeos_shortcode" style="display:none;">
 			<div class="wrap">
 				<h3><?php _e( 'Insert a BadgeOS shortcode', 'badgeos' ); ?></h3>

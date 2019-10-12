@@ -5,11 +5,11 @@ if ( ! defined( 'ABSPATH' ) )
 
 class BadgeOS_Shortcode {
 
-	public $name            = '';
-	public $description     = '';
-	public $slug            = '';
-	public $output_callback = '';
-	public $attributes      = array();
+	public $name			 = '';
+	public $description		 = '';
+	public $slug			 = '';
+	public $output_callback	 = '';
+	public $attributes		 = array();
 
 	public function __construct( $_args = array() ) {
 
@@ -23,32 +23,32 @@ class BadgeOS_Shortcode {
 
 	private function _set_properties( $_args = array() ) {
 
-		$defaults = array(
-			'name'            => '',
-			'description'     => '',
-			'slug'            => '',
-			'output_callback' => '',
-			'attributes'      => array(),
+		$defaults	 = array(
+			'name'				 => '',
+			'description'		 => '',
+			'slug'				 => '',
+			'output_callback'	 => '',
+			'attributes'		 => array(),
 		);
-		$args = wp_parse_args( $_args, $defaults );
+		$args		 = wp_parse_args( $_args, $defaults );
 
-		$this->name            = $args['name'];
-		$this->description     = $args['description'];
-		$this->slug            = $args['slug'];
-		$this->output_callback = $args['output_callback'];
-		$this->attributes      = $this->_set_attribute_defaults( $args['attributes'] );
+		$this->name				 = $args[ 'name' ];
+		$this->description		 = $args[ 'description' ];
+		$this->slug				 = $args[ 'slug' ];
+		$this->output_callback	 = $args[ 'output_callback' ];
+		$this->attributes		 = $this->_set_attribute_defaults( $args[ 'attributes' ] );
 	}
 
 	private function _set_attribute_defaults( $attributes = array() ) {
 		foreach ( $attributes as $attribute => $details ) {
-			$attr_defaults = array(
-				'name'        => '',
-				'type'        => '',
-				'description' => '',
-				'values'      => '',
-				'default'     => '',
+			$attr_defaults				 = array(
+				'name'			 => '',
+				'type'			 => '',
+				'description'	 => '',
+				'values'		 => '',
+				'default'		 => '',
 			);
-			$attributes[ $attribute ] = wp_parse_args( $details, $attr_defaults );
+			$attributes[ $attribute ]	 = wp_parse_args( $details, $attr_defaults );
 		}
 		return $attributes;
 	}

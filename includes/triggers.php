@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 /**
  * Helper function for returning our available actvity triggers
  *
@@ -21,20 +20,18 @@ if ( ! defined( 'ABSPATH' ) )
 function badgeos_get_activity_triggers() {
 	global $badgeos;
 
-	$badgeos->activity_triggers = apply_filters( 'badgeos_activity_triggers',
-		array(
-			// WordPress-specific
-			'wp_login'             => __( 'Log in to Website', 'badgeos' ),
-			'badgeos_new_comment'  => __( 'Comment on a post', 'badgeos' ),
-			'badgeos_specific_new_comment' => __( 'Comment on a specific post', 'badgeos' ),
-			'badgeos_new_post'     => __( 'Publish a new post', 'badgeos' ),
-			'badgeos_new_page'     => __( 'Publish a new page', 'badgeos' ),
-
-			// BadgeOS-specific
-			'specific-achievement' => __( 'Specific Achievement of Type', 'badgeos' ),
-			'any-achievement'      => __( 'Any Achievement of Type', 'badgeos' ),
-			'all-achievements'     => __( 'All Achievements of Type', 'badgeos' ),
-		)
+	$badgeos->activity_triggers = apply_filters( 'badgeos_activity_triggers', array(
+		// WordPress-specific
+		'wp_login'						 => __( 'Log in to Website', 'badgeos' ),
+		'badgeos_new_comment'			 => __( 'Comment on a post', 'badgeos' ),
+		'badgeos_specific_new_comment'	 => __( 'Comment on a specific post', 'badgeos' ),
+		'badgeos_new_post'				 => __( 'Publish a new post', 'badgeos' ),
+		'badgeos_new_page'				 => __( 'Publish a new page', 'badgeos' ),
+		// BadgeOS-specific
+		'specific-achievement'	 => __( 'Specific Achievement of Type', 'badgeos' ),
+		'any-achievement'		 => __( 'Any Achievement of Type', 'badgeos' ),
+		'all-achievements'		 => __( 'All Achievements of Type', 'badgeos' ),
+	)
 	);
 
 	return $badgeos->activity_triggers;
@@ -60,18 +57,16 @@ function badgeos_load_activity_triggers() {
 			continue;
 
 		// Add trigger for unlocking ANY and ALL posts for each achievement type
-		$activity_triggers['badgeos_unlock_'.$achievement_type] = sprintf( __( 'Unlocked a %s', 'badgeos' ), $post_type_object->labels->singular_name );
-		$activity_triggers['badgeos_unlock_all_'.$achievement_type] = sprintf( __( 'Unlocked all %s', 'badgeos' ), $post_type_object->labels->name );
-
+		$activity_triggers[ 'badgeos_unlock_' . $achievement_type ]		 = sprintf( __( 'Unlocked a %s', 'badgeos' ), $post_type_object->labels->singular_name );
+		$activity_triggers[ 'badgeos_unlock_all_' . $achievement_type ]	 = sprintf( __( 'Unlocked all %s', 'badgeos' ), $post_type_object->labels->name );
 	}
 
 	// Loop through each trigger and add our trigger event to the hook
 	foreach ( $activity_triggers as $trigger => $label )
 		add_action( $trigger, 'badgeos_trigger_event', 10, 20 );
-
 }
-add_action( 'init', 'badgeos_load_activity_triggers' );
 
+add_action( 'init', 'badgeos_load_activity_triggers' );
 /**
  * Handle each of our activity triggers
  *
@@ -91,8 +86,8 @@ function badgeos_trigger_event() {
 	$this_trigger = current_filter();
 
 	// Grab the user ID
-	$user_id = badgeos_trigger_get_user_id( $this_trigger, $args );
-	$user_data = get_user_by( 'id', $user_id );
+	$user_id	 = badgeos_trigger_get_user_id( $this_trigger, $args );
+	$user_data	 = get_user_by( 'id', $user_id );
 
 	// Sanity check, if we don't have a user object, bail here
 	if ( ! is_object( $user_data ) )
@@ -110,13 +105,12 @@ function badgeos_trigger_event() {
 
 	// Now determine if any badges are earned based on this trigger event
 	$triggered_achievements = $wpdb->get_results( $wpdb->prepare(
-		"
+	"
 		SELECT post_id
 		FROM   $wpdb->postmeta
 		WHERE  meta_key = '_badgeos_trigger_type'
 		       AND meta_value = %s
-		",
-		$this_trigger
+		", $this_trigger
 	) );
 
 	foreach ( $triggered_achievements as $achievement ) {
@@ -124,7 +118,6 @@ function badgeos_trigger_event() {
 	}
 
 	return $args[ 0 ];
-
 }
 
 /**
@@ -140,20 +133,20 @@ function badgeos_trigger_get_user_id( $trigger = '', $args = array() ) {
 
 	switch ( $trigger ) {
 		case 'wp_login' :
-			$user_data = get_user_by( 'login', $args[ 0 ] );
-			$user_id = $user_data->ID;
+			$user_data	 = get_user_by( 'login', $args[ 0 ] );
+			$user_id	 = $user_data->ID;
 			break;
 		case 'badgeos_unlock_' == substr( $trigger, 0, 15 ) :
-			$user_id = $args[0];
+			$user_id	 = $args[ 0 ];
 			break;
 		case 'badgeos_new_post' :
 		case 'badgeos_new_page' :
 		case 'badgeos_new_comment' :
 		case 'badgeos_specific_new_comment' :
-			$user_id = $args[1];
+			$user_id	 = $args[ 1 ];
 			break;
 		default :
-			$user_id = get_current_user_id();
+			$user_id	 = get_current_user_id();
 			break;
 	}
 
@@ -171,7 +164,7 @@ function badgeos_trigger_get_user_id( $trigger = '', $args = array() ) {
 function badgeos_get_user_triggers( $user_id = 0, $site_id = 0 ) {
 
 	// Grab all of the user's triggers
-	$user_triggers = ( $array_exists = get_user_meta( $user_id, '_badgeos_triggered_triggers', true ) ) ? $array_exists : array( $site_id => array() );
+	$user_triggers	 = ( $array_exists	 = get_user_meta( $user_id, '_badgeos_triggered_triggers', true ) ) ? $array_exists : array( $site_id => array() );
 
 	// Use current site ID if site ID is not set, AND not explicitly set to false
 	if ( ! $site_id && false !== $site_id ) {
@@ -182,7 +175,7 @@ function badgeos_get_user_triggers( $user_id = 0, $site_id = 0 ) {
 	if ( $site_id && isset( $user_triggers[ $site_id ] ) ) {
 		return $user_triggers[ $site_id ];
 
-	// Otherwise, return the full array of all triggers across all sites
+		// Otherwise, return the full array of all triggers across all sites
 	} else {
 		return $user_triggers;
 	}
@@ -210,13 +203,12 @@ function badgeos_get_user_trigger_count( $user_id, $trigger, $site_id = 0, $args
 	$trigger = apply_filters( 'badgeos_get_user_trigger_name', $trigger, $user_id, $site_id, $args );
 
 	// If we have any triggers, return the current count for the given trigger
-	if ( ! empty( $user_triggers ) && isset( $user_triggers[$trigger] ) )
-		return absint( $user_triggers[$trigger] );
+	if ( ! empty( $user_triggers ) && isset( $user_triggers[ $trigger ] ) )
+		return absint( $user_triggers[ $trigger ] );
 
 	// Otherwise, they've never hit the trigger
 	else
 		return 0;
-
 }
 
 /**
@@ -236,17 +228,16 @@ function badgeos_update_user_trigger_count( $user_id, $trigger, $site_id = 0, $a
 		$site_id = get_current_blog_id();
 
 	// Grab the current count and increase it by 1
-	$trigger_count = absint( badgeos_get_user_trigger_count( $user_id, $trigger, $site_id, $args ) );
-	$trigger_count += (int) apply_filters( 'badgeos_update_user_trigger_count', 1, $user_id, $trigger, $site_id, $args );
+	$trigger_count	 = absint( badgeos_get_user_trigger_count( $user_id, $trigger, $site_id, $args ) );
+	$trigger_count	 += ( int ) apply_filters( 'badgeos_update_user_trigger_count', 1, $user_id, $trigger, $site_id, $args );
 
 	// Update the triggers arary with the new count
-	$user_triggers = badgeos_get_user_triggers( $user_id, false );
-	$user_triggers[$site_id][$trigger] = $trigger_count;
+	$user_triggers						 = badgeos_get_user_triggers( $user_id, false );
+	$user_triggers[ $site_id ][ $trigger ]	 = $trigger_count;
 	update_user_meta( $user_id, '_badgeos_triggered_triggers', $user_triggers );
 
 	// Send back our trigger count for other purposes
 	return $trigger_count;
-
 }
 
 /**
@@ -271,18 +262,17 @@ function badgeos_reset_user_trigger_count( $user_id, $trigger, $site_id = 0 ) {
 	if ( 'all' == $trigger ) {
 		// For all sites
 		if ( 'all' == $site_id )
-			$user_triggers = array();
+			$user_triggers			 = array();
 		// For a specific site
 		else
-			$user_triggers[$site_id] = array();
-	// Otherwise, reset the specific trigger back to zero
+			$user_triggers[ $site_id ] = array();
+		// Otherwise, reset the specific trigger back to zero
 	} else {
-		$user_triggers[$site_id][$trigger] = 0;
+		$user_triggers[ $site_id ][ $trigger ] = 0;
 	}
 
 	// Finally, update our user meta
 	update_user_meta( $user_id, '_badgeos_triggered_triggers', $user_triggers );
-
 }
 
 /**
@@ -299,8 +289,8 @@ function badgeos_publish_listener( $post_id = 0 ) {
 
 	// Bail if we're not intentionally saving a post
 	if (
-		defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE // If we're autosaving,
-		|| wp_is_post_revision( $post_id )            // or this is a revision
+	defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE // If we're autosaving,
+	|| wp_is_post_revision( $post_id )			// or this is a revision
 	)
 		return;
 
@@ -312,11 +302,10 @@ function badgeos_publish_listener( $post_id = 0 ) {
 	// Trigger a badgeos_new_{$post_type} action
 	$post = get_post( $post_id );
 	do_action( "badgeos_new_{$post->post_type}", $post_id, $post->post_author, $post );
-
 }
+
 add_action( 'publish_post', 'badgeos_publish_listener', 0 );
 add_action( 'publish_page', 'badgeos_publish_listener', 0 );
-
 /**
  * Listener function for comment publishing
  *
@@ -335,14 +324,14 @@ function badgeos_approved_comment_listener( $comment_ID, $comment ) {
 	}
 
 	// Check if comment is approved
-	if ( 1 != (int) $comment[ 'comment_approved' ] ) {
+	if ( 1 != ( int ) $comment[ 'comment_approved' ] ) {
 		return;
 	}
 
 	// Trigger a comment actions
-	do_action( 'badgeos_specific_new_comment', (int) $comment_ID, (int) $comment[ 'user_id' ], $comment[ 'comment_post_ID' ], $comment );
-	do_action( 'badgeos_new_comment', (int) $comment_ID, (int) $comment[ 'user_id' ], $comment[ 'comment_post_ID' ], $comment );
-
+	do_action( 'badgeos_specific_new_comment', ( int ) $comment_ID, ( int ) $comment[ 'user_id' ], $comment[ 'comment_post_ID' ], $comment );
+	do_action( 'badgeos_new_comment', ( int ) $comment_ID, ( int ) $comment[ 'user_id' ], $comment[ 'comment_post_ID' ], $comment );
 }
+
 add_action( 'comment_approved_comment', 'badgeos_approved_comment_listener', 0, 2 );
 add_action( 'wp_insert_comment', 'badgeos_approved_comment_listener', 0, 2 );

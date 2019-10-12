@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_List_Renderer {
 
 	static function query_and_render( $args ) {

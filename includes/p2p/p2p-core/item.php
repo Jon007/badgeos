@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 /**
  * A uniform wrapper for various types of WP objects, i.e. posts or users.
  */

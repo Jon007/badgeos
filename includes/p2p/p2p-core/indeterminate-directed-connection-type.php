@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Indeterminate_Directed_Connection_Type extends P2P_Directed_Connection_Type {
 
 	protected function recognize( $arg, $unused = null ) {

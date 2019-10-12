@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 /**
  * Return link to Badge Builder.
  *
@@ -42,23 +41,21 @@ function badgeos_badge_builder_filter_thumbnail_metabox( $content, $post_id ) {
 		// If no thumbnail, output standard badge builder link
 		if ( ! has_post_thumbnail( $post_id ) ) {
 			$content .= '<p>' . badgeos_get_badge_builder_link( array( 'post_id' => $post_id, 'link_text' => __( 'Use Credly Badge Builder', 'badgeos' ) ) ) . '</p>';
-		// Otherwise, if thumbnail is a badge builder badge,`
-		// output a "continue editing" link
+			// Otherwise, if thumbnail is a badge builder badge,`
+			// output a "continue editing" link
 		} else {
-			$attachment_id = get_post_thumbnail_id( $post_id );
-			$continue = get_post_meta( $attachment_id, '_credly_badge_meta', true );
+			$attachment_id	 = get_post_thumbnail_id( $post_id );
+			$continue		 = get_post_meta( $attachment_id, '_credly_badge_meta', true );
 			if ( $continue )
-				$content .= '<p>' . badgeos_get_badge_builder_link( array( 'post_id' => $post_id, 'attachment_id' => $attachment_id, 'link_text' => __( 'Edit in Credly Badge Builder', 'badgeos' ), 'continue' => $continue ) ) . '</p>';
+				$content		 .= '<p>' . badgeos_get_badge_builder_link( array( 'post_id' => $post_id, 'attachment_id' => $attachment_id, 'link_text' => __( 'Edit in Credly Badge Builder', 'badgeos' ), 'continue' => $continue ) ) . '</p>';
 		}
-
 	}
 
 	// Return the meta box content
 	return $content;
-
 }
-add_filter( 'admin_post_thumbnail_html', 'badgeos_badge_builder_filter_thumbnail_metabox', 10, 2 );
 
+add_filter( 'admin_post_thumbnail_html', 'badgeos_badge_builder_filter_thumbnail_metabox', 10, 2 );
 /**
  * Build icon credit text for Credly Badge Builder images
  *
@@ -71,16 +68,12 @@ function badgeos_badge_builder_get_icon_credit( $attachment_id = 0 ) {
 
 	// If image has badge builder icon meta
 	if ( $icon_meta = get_post_meta( $attachment_id, '_credly_icon_meta', true ) ) {
-		$icon_meta = (array) maybe_unserialize( $icon_meta );
-		$credit = sprintf(
-			__( 'Badge icon "%1$s (%2$s)" provided by %3$s under %4$s', 'badgeos' ),
-			$icon_meta['noun'],
-			$icon_meta['npid'],
-			$icon_meta['attribute'],
-			$icon_meta['license']
+		$icon_meta	 = ( array ) maybe_unserialize( $icon_meta );
+		$credit		 = sprintf(
+		__( 'Badge icon "%1$s (%2$s)" provided by %3$s under %4$s', 'badgeos' ), $icon_meta[ 'noun' ], $icon_meta[ 'npid' ], $icon_meta[ 'attribute' ], $icon_meta[ 'license' ]
 		);
 
-	// Otherwise, there is no one to credit
+		// Otherwise, there is no one to credit
 	} else {
 		$credit = '';
 	}

@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 // Admin screen with metaboxes base class
 
 abstract class scbBoxesPage extends scbAdminPage {

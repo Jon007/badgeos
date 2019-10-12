@@ -44,11 +44,12 @@ class Credly_Badge_Builder {
 		// Fetch the credly API key
 		$this->credly_api_key = credly_get_api_key();
 		//FIX: exit if no api key, avoid link generation errors
-    if (! $this->credly_api_key){return;}
+		if ( ! $this->credly_api_key ) {
+			return;
+		}
 
 		add_action( 'wp_ajax_badge-builder-save-badge', array( $this, 'ajax_save_badge' ) );
 		add_action( 'wp_ajax_badge-builder-generate-link', array( $this, 'ajax_generate_link' ) );
-
 	}
 
 	/**
@@ -63,19 +64,18 @@ class Credly_Badge_Builder {
 		if ( $this->credly_api_key ) {
 			// Trade the key for a temp token
 			$response = wp_remote_post(
-				trailingslashit( $this->sdk_url ) . 'code',
-				array(
-					'user-agent' => 'WordPress/' . $wp_version . '; BadgeOS/' . BadgeOS::$version . '; ' . get_bloginfo( 'url' ),
-					'body' => array(
-						'access_token' => $this->credly_api_key
-					)
+			trailingslashit( $this->sdk_url ) . 'code', array(
+				'user-agent' => 'WordPress/' . $wp_version . '; BadgeOS/' . BadgeOS::$version . '; ' . get_bloginfo( 'url' ),
+				'body'		 => array(
+					'access_token' => $this->credly_api_key
 				)
+			)
 			);
 
 			// If the response was not an error
 			if ( ! is_wp_error( $response ) ) {
 				// Decode the response
-				$response_body = json_decode( $response['body'] );
+				$response_body = json_decode( $response[ 'body' ] );
 
 				// If response was successful, return the temp token
 				if ( isset( $response_body->temp_token ) )
@@ -98,20 +98,19 @@ class Credly_Badge_Builder {
 	public function generate_link( $args = array() ) {
 
 		// Setup and parse our default args
-		$defaults = apply_filters( 'credly_badge_builder_generate_link_defaults', array(
-			'continue'  => null,
+		$defaults	 = apply_filters( 'credly_badge_builder_generate_link_defaults', array(
+			'continue' => null,
 		) );
-		$args = wp_parse_args( $args, $defaults );
+		$args		 = wp_parse_args( $args, $defaults );
 
 		if ( $this->credly_api_key ) {
 			$link = add_query_arg(
-				array(
-					'continue'  => rawurlencode( json_encode( $args['continue'] ) )
-				),
-				esc_url( trailingslashit( $this->sdk_url ) . 'embed/' . $this->fetch_temp_token() )
+			array(
+				'continue' => rawurlencode( json_encode( $args[ 'continue' ] ) )
+			), esc_url( trailingslashit( $this->sdk_url ) . 'embed/' . $this->fetch_temp_token() )
 			);
 		} else {
-			$link = '#TB_inline?width=' . $args['width'] . '&height=' . $args['width'] . '&inlineId=teaser';
+			$link = '#TB_inline?width=' . $args[ 'width' ] . '&height=' . $args[ 'width' ] . '&inlineId=teaser';
 		}
 
 		// Return our generated link
@@ -130,32 +129,32 @@ class Credly_Badge_Builder {
 		global $post;
 
 		// Setup and parse our default args
-		$defaults = apply_filters( 'credly_badge_builder_render_link_defaults', array(
-			'attachment_id' => $post ? get_post_thumbnail_id() : 0,
-			'width'         => '960',
-			'height'        => '540',
-			'continue'      => null,
-			'link_text'     => __( 'Use Credly Badge Builder', 'badgeos' ),
+		$defaults	 = apply_filters( 'credly_badge_builder_render_link_defaults', array(
+			'attachment_id'	 => $post ? get_post_thumbnail_id() : 0,
+			'width'			 => '960',
+			'height'		 => '540',
+			'continue'		 => null,
+			'link_text'		 => __( 'Use Credly Badge Builder', 'badgeos' ),
 		) );
-		$args = wp_parse_args( $args, $defaults );
+		$args		 = wp_parse_args( $args, $defaults );
 
 		// Build our link tag
 		if ( $this->credly_api_key )
-			$link = admin_url( 'admin-ajax.php?action=badge-builder-generate-link&attachment_id=' . $args['attachment_id'] . '&TB_iframe=true' );
+			$link	 = admin_url( 'admin-ajax.php?action=badge-builder-generate-link&attachment_id=' . $args[ 'attachment_id' ] . '&TB_iframe=true' );
 		else
-			$link = $link = '#TB_inline?width=' . $args['width'] . '&height=' . $args['width'] . '&inlineId=teaser';
-		$output = '<a href="' . $link . '" class="thickbox badge-builder-link" data-width="' . $args['width'] . '" data-height="' . $args['height'] . '" data-attachment_id="' . $args['attachment_id'] . '">' . $args['link_text'] . '</a>';
+			$link	 = $link	 = '#TB_inline?width=' . $args[ 'width' ] . '&height=' . $args[ 'width' ] . '&inlineId=teaser';
+		$output	 = '<a href="' . $link . '" class="thickbox badge-builder-link" data-width="' . $args[ 'width' ] . '" data-height="' . $args[ 'height' ] . '" data-attachment_id="' . $args[ 'attachment_id' ] . '">' . $args[ 'link_text' ] . '</a>';
 
 		// Include teaser output if we have no API key
 		if ( ! $this->credly_api_key )
-			$output .= '<div id="teaser" style="display:none;"><a href="' . admin_url( 'admin.php?page=badgeos_sub_credly_integration' ) . '"><img src="' . $GLOBALS['badgeos']->directory_url . 'images/badge-builder-teaser.png" alt="' . esc_attr__( 'Enable Credly Integration to use the Badge Builder', 'badgeos' ) . '"></a></div>';
+			$output .= '<div id="teaser" style="display:none;"><a href="' . admin_url( 'admin.php?page=badgeos_sub_credly_integration' ) . '"><img src="' . $GLOBALS[ 'badgeos' ]->directory_url . 'images/badge-builder-teaser.png" alt="' . esc_attr__( 'Enable Credly Integration to use the Badge Builder', 'badgeos' ) . '"></a></div>';
 
 		// Include our proper scripts
 		add_thickbox();
 		wp_enqueue_script( 'credly-badge-builder' );
 
 		// Return our markup
-		return apply_filters( 'credly_render_badge_builder', $output, $args['width'], $args['height'] );
+		return apply_filters( 'credly_render_badge_builder', $output, $args[ 'width' ], $args[ 'height' ] );
 	}
 
 	/**
@@ -166,13 +165,12 @@ class Credly_Badge_Builder {
 	public function ajax_generate_link() {
 
 		// Build continue param
-		$attachment_id = isset( $_REQUEST['attachment_id'] ) ? absint( $_REQUEST['attachment_id'] ) : 0;
-		$continue      = $attachment_id ? get_post_meta( $attachment_id, '_credly_badge_meta', true ) : null;
+		$attachment_id	 = isset( $_REQUEST[ 'attachment_id' ] ) ? absint( $_REQUEST[ 'attachment_id' ] ) : 0;
+		$continue		 = $attachment_id ? get_post_meta( $attachment_id, '_credly_badge_meta', true ) : null;
 
 		// Send back the link
 		wp_redirect( $this->generate_link( array( 'continue' => $continue ) ) );
 		die();
-
 	}
 
 	/**
@@ -187,10 +185,10 @@ class Credly_Badge_Builder {
 			wp_send_json_error();
 
 		// Grab all our data
-		$post_id    = $_REQUEST['post_id'];
-		$image      = $_REQUEST['image'];
-		$icon_meta  = $_REQUEST['icon_meta'];
-		$badge_meta = $_REQUEST['all_data'];
+		$post_id	 = $_REQUEST[ 'post_id' ];
+		$image		 = $_REQUEST[ 'image' ];
+		$icon_meta	 = $_REQUEST[ 'icon_meta' ];
+		$badge_meta	 = $_REQUEST[ 'all_data' ];
 
 		// Upload the image
 		$attachment_id = $this->media_sideload_image( $image, $post_id );
@@ -206,7 +204,6 @@ class Credly_Badge_Builder {
 
 		// Return our success response
 		wp_send_json_success( array( 'attachment_id' => $attachment_id, 'metabox_html' => $metabox_html ) );
-
 	}
 
 	/**
@@ -232,21 +229,21 @@ class Credly_Badge_Builder {
 			// Set variables for storage
 			// fix file filename for query strings
 			preg_match( '/[^\?]+\.(jpe?g|jpe|gif|png)\b/i', $file, $matches );
-			$file_array['name'] = basename($matches[0]);
-			$file_array['tmp_name'] = $tmp;
+			$file_array[ 'name' ]		 = basename( $matches[ 0 ] );
+			$file_array[ 'tmp_name' ]	 = $tmp;
 
 			// If error storing temporarily, unlink
 			if ( is_wp_error( $tmp ) ) {
-				@unlink($file_array['tmp_name']);
-				$file_array['tmp_name'] = '';
+				@unlink( $file_array[ 'tmp_name' ] );
+				$file_array[ 'tmp_name' ] = '';
 			}
 
 			// do the validation and storage stuff
 			$id = media_handle_sideload( $file_array, $post_id, $desc );
 
 			// If error storing permanently, unlink
-			if ( is_wp_error($id) ) {
-				@unlink($file_array['tmp_name']);
+			if ( is_wp_error( $id ) ) {
+				@unlink( $file_array[ 'tmp_name' ] );
 			}
 
 			// Send back the attachment ID

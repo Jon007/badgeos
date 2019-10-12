@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 /**
  * Check if user should earn an achievement, and award it if so.
  *
@@ -82,7 +81,6 @@ function badgeos_check_achievement_completion_for_user( $achievement_id = 0, $us
 
 	// Available filter to support custom earning rules
 	return apply_filters( 'user_deserves_achievement', $return, $user_id, $achievement_id, $this_trigger, $site_id, $args );
-
 }
 
 /**
@@ -100,28 +98,28 @@ function badgeos_user_meets_points_requirement( $return = false, $user_id = 0, $
 	if ( 'points' == get_post_meta( $achievement_id, '_badgeos_earned_by', true ) ) {
 
 		// Grab our user's points and see if they at least as many as required
-		$user_points     = absint( badgeos_get_users_points( $user_id ) );
+		$user_points	 = absint( badgeos_get_users_points( $user_id ) );
 		$points_required = absint( get_post_meta( $achievement_id, '_badgeos_points_required', true ) );
-		$last_activity   = badgeos_achievement_last_user_activity( $achievement_id );
+		$last_activity	 = badgeos_achievement_last_user_activity( $achievement_id );
 
 		if ( $user_points >= $points_required )
-			$return = true;
+			$return	 = true;
 		else
-			$return = false;
+			$return	 = false;
 
 		// If the user just earned the badge, though, don't let them earn it again
 		// This prevents an infinite loop if the badge has no maximum earnings limit
 		$minimum_time = time() - 2;
 		if ( $last_activity >= $minimum_time ) {
-		    $return = false;
+			$return = false;
 		}
 	}
 
 	// Return our eligibility status
 	return $return;
 }
-add_filter( 'user_deserves_achievement', 'badgeos_user_meets_points_requirement', 10, 3 );
 
+add_filter( 'user_deserves_achievement', 'badgeos_user_meets_points_requirement', 10, 3 );
 /**
  * Award an achievement to a user
  *
@@ -163,8 +161,8 @@ function badgeos_award_achievement_to_user( $achievement_id = 0, $user_id = 0, $
 
 	// Patch for WordPress to support recursive actions, specifically for badgeos_award_achievement
 	// Because global iteration is fun, assuming we can get this fixed for WordPress 3.9
-	$is_recursed_filter = ( 'badgeos_award_achievement' == current_filter() );
-	$current_key = null;
+	$is_recursed_filter	 = ( 'badgeos_award_achievement' == current_filter() );
+	$current_key		 = null;
 
 	// Get current position
 	if ( $is_recursed_filter ) {
@@ -181,7 +179,6 @@ function badgeos_award_achievement_to_user( $achievement_id = 0, $user_id = 0, $
 			next( $wp_filter[ 'badgeos_award_achievement' ] );
 		}
 	}
-
 }
 
 /**
@@ -206,7 +203,7 @@ function badgeos_revoke_achievement_from_user( $achievement_id = 0, $user_id = 0
 		if ( $achievement->ID == $achievement_id ) {
 
 			// Drop the achievement from our earnings
-			unset( $earned_achievements[$key] );
+			unset( $earned_achievements[ $key ] );
 
 			// Re-key our array
 			$earned_achievements = array_values( $earned_achievements );
@@ -221,7 +218,6 @@ function badgeos_revoke_achievement_from_user( $achievement_id = 0, $user_id = 0
 			break;
 		}
 	}
-
 }
 
 /**
@@ -237,17 +233,15 @@ function badgeos_maybe_award_additional_achievements_to_user( $user_id = 0, $ach
 	// Get achievements that can be earned from completing this achievement
 	$dependent_achievements = badgeos_get_dependent_achievements( $achievement_id );
 
-    // See if a user has unlocked all achievements of a given type
-    badgeos_maybe_trigger_unlock_all( $user_id, $achievement_id );
+	// See if a user has unlocked all achievements of a given type
+	badgeos_maybe_trigger_unlock_all( $user_id, $achievement_id );
 
 	// Loop through each dependent achievement and see if it can be awarded
 	foreach ( $dependent_achievements as $achievement )
 		badgeos_maybe_award_achievement_to_user( $achievement->ID, $user_id );
-
-
 }
-add_action( 'badgeos_award_achievement', 'badgeos_maybe_award_additional_achievements_to_user', 10, 2 );
 
+add_action( 'badgeos_award_achievement', 'badgeos_maybe_award_additional_achievements_to_user', 10, 2 );
 /**
  * Check if a user has unlocked all achievements of a given type
  *
@@ -357,7 +351,6 @@ function badgeos_user_has_access_to_achievement( $user_id = 0, $achievement_id =
 
 	// Available filter for custom overrides
 	return apply_filters( 'user_has_access_to_achievement', $return, $user_id, $achievement_id, $this_trigger, $site_id, $args );
-
 }
 
 /**
@@ -383,18 +376,18 @@ function badgeos_user_has_access_to_step( $return = false, $user_id = 0, $step_i
 
 	// Prevent user from repeatedly earning the same step
 	if ( $return && $parent_achievement && badgeos_get_user_achievements( array(
-			'user_id'        => absint( $user_id ),
-			'achievement_id' => absint( $step_id ),
-			'since'          => absint( badgeos_achievement_last_user_activity( $parent_achievement->ID, $user_id ) )
-		) )
+		'user_id'		 => absint( $user_id ),
+		'achievement_id' => absint( $step_id ),
+		'since'			 => absint( badgeos_achievement_last_user_activity( $parent_achievement->ID, $user_id ) )
+	) )
 	)
 		$return = false;
 
 	// Send back our eligigbility
 	return $return;
 }
-add_filter( 'user_has_access_to_achievement', 'badgeos_user_has_access_to_step', 10, 3 );
 
+add_filter( 'user_has_access_to_achievement', 'badgeos_user_has_access_to_step', 10, 3 );
 /**
  * Validate whether or not a user has completed all requirements for a step.
  *
@@ -417,15 +410,15 @@ function badgeos_user_deserves_step( $return = false, $user_id = 0, $step_id = 0
 
 		// If we meet or exceed the required number of checkins, they deserve the step
 		if ( $relevant_count >= $minimum_activity_count )
-			$return = true;
+			$return	 = true;
 		else
-			$return = false;
+			$return	 = false;
 	}
 
 	return $return;
 }
-add_filter( 'user_deserves_achievement', 'badgeos_user_deserves_step', 10, 3 );
 
+add_filter( 'user_deserves_achievement', 'badgeos_user_deserves_step', 10, 3 );
 /**
  * Count a user's relevant actions for a given step
  *
@@ -443,34 +436,34 @@ function badgeos_get_step_activity_count( $user_id = 0, $step_id = 0 ) {
 	$step_requirements = badgeos_get_step_requirements( $step_id );
 
 	// Determine which type of trigger we're using and return the corresponding activities
-	switch( $step_requirements['trigger_type'] ) {
+	switch ( $step_requirements[ 'trigger_type' ] ) {
 		case 'specific-achievement' :
 
 			// Get our parent achievement
 			$parent_achievement = badgeos_get_parent_of_achievement( $step_id );
 
 			// If the user has any interaction with this achievement, only get activity since that date
-			if ( $parent_achievement && $date = badgeos_achievement_last_user_activity( $parent_achievement->ID, $user_id ) )
-				$since = $date;
+			if ( $parent_achievement && $date	 = badgeos_achievement_last_user_activity( $parent_achievement->ID, $user_id ) )
+				$since	 = $date;
 			else
-				$since = 0;
+				$since	 = 0;
 
 			// Get our achievement activity
-			$achievements = badgeos_get_user_achievements( array(
-				'user_id'        => absint( $user_id ),
-				'achievement_id' => absint( $step_requirements['achievement_post'] ),
-				'since'          => $since
+			$achievements	 = badgeos_get_user_achievements( array(
+				'user_id'		 => absint( $user_id ),
+				'achievement_id' => absint( $step_requirements[ 'achievement_post' ] ),
+				'since'			 => $since
 			) );
-			$activities = count( $achievements );
+			$activities		 = count( $achievements );
 			break;
 		case 'any-achievement' :
-			$activities = badgeos_get_user_trigger_count( $user_id, 'badgeos_unlock_' . $step_requirements['achievement_type'] );
+			$activities		 = badgeos_get_user_trigger_count( $user_id, 'badgeos_unlock_' . $step_requirements[ 'achievement_type' ] );
 			break;
 		case 'all-achievements' :
-			$activities = badgeos_get_user_trigger_count( $user_id, 'badgeos_unlock_all_' . $step_requirements['achievement_type'] );
+			$activities		 = badgeos_get_user_trigger_count( $user_id, 'badgeos_unlock_all_' . $step_requirements[ 'achievement_type' ] );
 			break;
 		default :
-			$activities = badgeos_get_user_trigger_count( $user_id, $step_requirements['trigger_type'] );
+			$activities		 = badgeos_get_user_trigger_count( $user_id, $step_requirements[ 'trigger_type' ] );
 			break;
 	}
 

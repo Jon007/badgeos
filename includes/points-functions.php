@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 /**
  * Return a user's points
  *
@@ -81,8 +80,8 @@ function badgeos_update_users_points( $user_id = 0, $new_points = 0, $admin_id =
 function badgeos_log_users_points( $user_id, $new_points, $total_points, $admin_id, $achievement_id ) {
 
 	// Setup our user objects
-	$user  = get_userdata( $user_id );
-	$admin = get_userdata( $admin_id );
+	$user	 = get_userdata( $user_id );
+	$admin	 = get_userdata( $admin_id );
 
 	// Alter our log message if this was an admin action
 	if ( $admin_id )
@@ -98,10 +97,9 @@ function badgeos_log_users_points( $user_id, $new_points, $total_points, $admin_
 	update_post_meta( $log_entry_id, '_badgeos_total_user_points', $total_points );
 	if ( $admin_id )
 		update_post_meta( $log_entry_id, '_badgeos_admin_awarded', $admin_id );
-
 }
-add_action( 'badgeos_update_users_points', 'badgeos_log_users_points', 10, 5 );
 
+add_action( 'badgeos_update_users_points', 'badgeos_log_users_points', 10, 5 );
 /**
  * Award new points to a user based on logged activites and earned badges
  *
@@ -118,4 +116,5 @@ function badgeos_award_user_points( $user_id = 0, $achievement_id = 0 ) {
 	if ( ! empty( $points ) )
 		return badgeos_update_users_points( $user_id, $points, false, $achievement_id );
 }
+
 add_action( 'badgeos_award_achievement', 'badgeos_award_user_points', 999, 2 );

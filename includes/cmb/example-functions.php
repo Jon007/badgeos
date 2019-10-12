@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 /**
  * Include and setup custom metaboxes and fields.
  *

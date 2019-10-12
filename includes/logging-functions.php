@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) )
  * @license http://www.gnu.org/licenses/agpl.txt GNU AGPL v3.0
  * @link https://credly.com
  */
-
 /**
  * Posts a log entry when a user unlocks any achievement post
  *
@@ -24,11 +23,13 @@ if ( ! defined( 'ABSPATH' ) )
  */
 function badgeos_post_log_entry( $object_id, $user_id = 0, $action = 'unlocked', $title = '' ) {
 
-    //FIX: JM: disabling this altogether, its just too dangerous, triggering autoposting etc
-    return false;
-    //FIX: JM: dont create new log posts for every single login, conflicts with other plugins evaluating new posts
-    //checking triggered wp_login isnt good enough as string may be translated.. and $action is blank..
-    if (strpos($title, 'wp_login', 0)){return 0;}
+	//FIX: JM: disabling this altogether, its just too dangerous, triggering autoposting etc
+	return false;
+	//FIX: JM: dont create new log posts for every single login, conflicts with other plugins evaluating new posts
+	//checking triggered wp_login isnt good enough as string may be translated.. and $action is blank..
+	if ( strpos( $title, 'wp_login', 0 ) ) {
+		return 0;
+	}
 
 	// Get the current user if no ID specified
 	if ( empty( $user_id ) )
@@ -36,10 +37,10 @@ function badgeos_post_log_entry( $object_id, $user_id = 0, $action = 'unlocked',
 
 	// Setup our args to easily pass through a filter
 	$args = array(
-		'user_id'   => $user_id,
-		'action'    => $action,
-		'object_id' => $object_id,
-		'title'     => $title
+		'user_id'	 => $user_id,
+		'action'	 => $action,
+		'object_id'	 => $object_id,
+		'title'		 => $title
 	);
 
 	// Write log entry via filter so it can be modified by third-parties
@@ -62,27 +63,27 @@ function badgeos_post_log_entry( $object_id, $user_id = 0, $action = 'unlocked',
 function badgeos_log_entry( $log_post_id, $args ) {
 
 	// If we weren't explicitly given a title, let's build one
-	if ( empty( $args['title'] ) ) {
-		$user              = get_userdata( $args['user_id'] );
-		$achievement       = get_post( $args['object_id'] );
-		$achievement_types = badgeos_get_achievement_types();
-		$achievement_type  = ( $achievement && isset( $achievement_types[$achievement->post_type]['single_name'] ) ) ? $achievement_types[$achievement->post_type]['single_name'] : '';
-		$args['title']     = ! empty( $title ) ? $title : apply_filters( 'badgeos_log_entry_title', "{$user->user_login} {$args['action']} the \"{$achievement->post_title}\" {$achievement_type}", $args );
+	if ( empty( $args[ 'title' ] ) ) {
+		$user				 = get_userdata( $args[ 'user_id' ] );
+		$achievement		 = get_post( $args[ 'object_id' ] );
+		$achievement_types	 = badgeos_get_achievement_types();
+		$achievement_type	 = ( $achievement && isset( $achievement_types[ $achievement->post_type ][ 'single_name' ] ) ) ? $achievement_types[ $achievement->post_type ][ 'single_name' ] : '';
+		$args[ 'title' ]		 = ! empty( $title ) ? $title : apply_filters( 'badgeos_log_entry_title', "{$user->user_login} {$args[ 'action' ]} the \"{$achievement->post_title}\" {$achievement_type}", $args );
 	}
 
 	// Insert our entry as a 'badgeos-log-entry' post
 	$log_post_id = wp_insert_post( array(
-		'post_title'  => $args['title'],
-		'post_author' => absint( $args['user_id'] ),
-		'post_type'   => 'badgeos-log-entry',
-		'post_status' => 'publish',
+		'post_title'	 => $args[ 'title' ],
+		'post_author'	 => absint( $args[ 'user_id' ] ),
+		'post_type'		 => 'badgeos-log-entry',
+		'post_status'	 => 'publish',
 	) );
 
 	// Return the ID of the newly created post
 	return $log_post_id;
 }
-add_filter( 'badgeos_post_log_entry', 'badgeos_log_entry', 10, 2 );
 
+add_filter( 'badgeos_post_log_entry', 'badgeos_log_entry', 10, 2 );
 /**
  * Hook to log the connected achievement ID
  *
@@ -93,4 +94,5 @@ add_filter( 'badgeos_post_log_entry', 'badgeos_log_entry', 10, 2 );
 function badgeos_log_achievement_id( $log_post_id, $object_id ) {
 	update_post_meta( $log_post_id, '_badgeos_log_achievement_id', $object_id );
 }
+
 add_action( 'badgeos_create_log_entry', 'badgeos_log_achievement_id', 10, 2 );

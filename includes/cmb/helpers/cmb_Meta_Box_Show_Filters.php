@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 /**
  * Show On Filters
  * Use the 'cmb_show_on' filter to further refine the conditions under which a metabox is displayed.

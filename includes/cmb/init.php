@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
 /*
 Script Name: 	Custom Metaboxes and Fields
 Contributors: 	Andrew Norcross (@norcross / andrewnorcross.com)

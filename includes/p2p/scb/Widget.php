@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 // Adds compatibility methods between WP_Widget and scbForms
 
 abstract class scbWidget extends WP_Widget {

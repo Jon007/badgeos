@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 interface P2P_Direction_Strategy {
 	function get_arrow();
 	function choose_direction( $direction );

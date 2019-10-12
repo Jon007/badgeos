@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 abstract class P2P_Field_Title implements P2P_Field {
 
 	protected $title;

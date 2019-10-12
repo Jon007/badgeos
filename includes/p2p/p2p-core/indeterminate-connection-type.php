@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Indeterminate_Connection_Type implements P2P_Direction_Strategy {
 
 	function get_arrow() {

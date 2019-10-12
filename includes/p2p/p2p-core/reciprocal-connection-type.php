@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Reciprocal_Connection_Type extends P2P_Indeterminate_Connection_Type {
 
 	function choose_direction( $direction ) {

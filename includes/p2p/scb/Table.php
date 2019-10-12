@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 // Takes care of creating, updating and deleting database tables
 
 class scbTable {

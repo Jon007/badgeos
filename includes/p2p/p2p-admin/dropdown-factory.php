@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 class P2P_Dropdown_Factory extends P2P_Factory {
 
 	protected $key = 'admin_dropdown';

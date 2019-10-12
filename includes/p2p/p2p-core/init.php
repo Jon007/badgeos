@@ -1,5 +1,8 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) )
+	exit; // Exit if accessed directly
+
 require_once dirname( __FILE__ ) . '/util.php';
 require_once dirname( __FILE__ ) . '/api.php';
 require_once dirname( __FILE__ ) . '/autoload.php';

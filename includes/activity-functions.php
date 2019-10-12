@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Achievement Activity Functions
  *
@@ -29,16 +30,15 @@ function badgeos_achievement_last_user_activity( $achievement_id = 0, $user_id =
 	if ( $achievement = badgeos_user_get_active_achievement( $user_id, $achievement_id ) ) {
 		$since = $achievement->date_started - 1;
 
-	// Otherwise, attempt to grab the achievement date from earned achievement meta
+		// Otherwise, attempt to grab the achievement date from earned achievement meta
 	} elseif ( $achievements = badgeos_get_user_achievements( array( 'user_id' => $user_id, 'achievement_id' => $achievement_id ) ) ) {
 		$achievement = array_pop( $achievements );
 		if ( is_object( $achievement ) )
-			$since = $achievement->date_earned + 1;
+			$since		 = $achievement->date_earned + 1;
 	}
 
 	// Finally, return our time
 	return $since;
-
 }
 
 /**
@@ -59,7 +59,7 @@ function badgeos_user_get_active_achievements( $user_id ) {
 		return array();
 
 	// Otherwise, we DO have achievements and should return them cast as an array
-	return (array) $achievements;
+	return ( array ) $achievements;
 }
 
 /**
@@ -76,15 +76,15 @@ function badgeos_user_update_active_achievements( $user_id = 0, $achievements = 
 
 	// If we're not replacing, append the passed array to our existing array
 	if ( true == $update ) {
-		$existing_achievements = badgeos_user_get_active_achievements( $user_id );
-		$achievements = (array) $achievements + (array) $existing_achievements;
+		$existing_achievements	 = badgeos_user_get_active_achievements( $user_id );
+		$achievements			 = ( array ) $achievements + ( array ) $existing_achievements;
 	}
 
 	// Update the user's active achievements meta
 	update_user_meta( $user_id, '_badgeos_active_achievements', $achievements );
 
 	// Return our updated achievements array
-	return (array) $achievements;
+	return ( array ) $achievements;
 }
 
 /**
@@ -102,7 +102,7 @@ function badgeos_user_get_active_achievement( $user_id = 0, $achievement_id = 0 
 	$achievements = badgeos_user_get_active_achievements( $user_id );
 
 	// Return the achievement if it exists, or false if not
-	return ( isset( $achievements[$achievement_id] ) ) ? $achievements[$achievement_id] : false;
+	return ( isset( $achievements[ $achievement_id ] ) ) ? $achievements[ $achievement_id ] : false;
 }
 
 /**
@@ -124,13 +124,13 @@ function badgeos_user_add_active_achievement( $user_id = 0, $achievement_id = 0 
 	$achievements = badgeos_user_get_active_achievements( $user_id );
 
 	// If it doesn't exist, add the achievement to the array
-	if ( ! isset( $achievements[$achievement_id] ) ) {
-		$achievements[$achievement_id] = badgeos_build_achievement_object( $achievement_id, 'started' );
+	if ( ! isset( $achievements[ $achievement_id ] ) ) {
+		$achievements[ $achievement_id ] = badgeos_build_achievement_object( $achievement_id, 'started' );
 		badgeos_user_update_active_achievements( $user_id, $achievements );
 	}
 
 	// Send back the added achievement object
-	return $achievements[$achievement_id];
+	return $achievements[ $achievement_id ];
 }
 
 /**
@@ -185,8 +185,8 @@ function badgeos_user_delete_active_achievement( $user_id = 0, $achievement_id =
 	$achievements = badgeos_user_get_active_achievements( $user_id );
 
 	// If the achievement exists, unset it
-	if ( isset( $achievements[$achievement_id] ) )
-		unset( $achievements[$achievement_id] );
+	if ( isset( $achievements[ $achievement_id ] ) )
+		unset( $achievements[ $achievement_id ] );
 
 	// Update the user's active achievements
 	return badgeos_user_update_active_achievements( $user_id, $achievements );
@@ -210,10 +210,10 @@ function badgeos_user_update_active_achievement_on_earnings( $user_id, $achievem
 			badgeos_user_update_active_achievement( $user_id, $parent_achievement->ID );
 		}
 
-	// Otherwise, drop the earned achievement form the user's active achievement array
+		// Otherwise, drop the earned achievement form the user's active achievement array
 	} else {
 		badgeos_user_delete_active_achievement( $user_id, $achievement_id );
 	}
-
 }
+
 add_action( 'badgeos_award_achievement', 'badgeos_user_update_active_achievement_on_earnings', 10, 2 );
